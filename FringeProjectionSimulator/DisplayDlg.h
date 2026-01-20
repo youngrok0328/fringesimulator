@@ -21,6 +21,7 @@ protected:
 	IPVM::BlobDetection* m_blobDetection;
 	IPVM::BlobInfo* m_blobInfos;
 	CScrollBar m_thresholdScroll;
+	CStatic m_thresholdLabel;
 	int m_threshold;
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
@@ -33,4 +34,5 @@ protected:
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 
 	void UpdateDisplay();
+	void UpdateThresholdLabel();
 };

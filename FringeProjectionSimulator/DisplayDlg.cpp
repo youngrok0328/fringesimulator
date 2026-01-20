@@ -21,6 +21,7 @@ namespace
 {
 	constexpr int32_t kScrollbarHeight = 18;
 	constexpr int32_t kScrollbarPadding = 4;
+	constexpr int32_t kThresholdLabelWidth = 60;
 	constexpr int32_t kThresholdMin = 0;
 	constexpr int32_t kThresholdMax = 255;
 	constexpr int32_t kThresholdDefault = 10;
@@ -78,12 +79,20 @@ BOOL DisplayDlg::OnInitDialog()
 	const CRect rtScrollbar(
 		kScrollbarPadding,
 		rtImageView.bottom + kScrollbarPadding,
-		rtClient.right - kScrollbarPadding,
+		rtClient.right - kScrollbarPadding - kThresholdLabelWidth - kScrollbarPadding,
 		rtImageView.bottom + kScrollbarPadding + kScrollbarHeight);
+	const CRect rtThresholdLabel(
+		rtScrollbar.right + kScrollbarPadding,
+		rtScrollbar.top,
+		rtScrollbar.right + kScrollbarPadding + kThresholdLabelWidth,
+		rtScrollbar.bottom);
 
 	m_thresholdScroll.Create(WS_CHILD | WS_VISIBLE | SBS_HORZ, rtScrollbar, this, 1);
 	m_thresholdScroll.SetScrollRange(kThresholdMin, kThresholdMax, FALSE);
 	m_thresholdScroll.SetScrollPos(m_threshold, TRUE);
+
+	m_thresholdLabel.Create(_T(""), WS_CHILD | WS_VISIBLE | SS_CENTER, rtThresholdLabel, this);
+	UpdateThresholdLabel();
 
 	UpdateDisplay();
 
@@ -119,9 +128,19 @@ void DisplayDlg::OnSize(UINT nType, int cx, int cy)
 			const CRect rtScrollbar(
 				kScrollbarPadding,
 				rtImageView.bottom + kScrollbarPadding,
-				cx - kScrollbarPadding,
+				cx - kScrollbarPadding - kThresholdLabelWidth - kScrollbarPadding,
 				rtImageView.bottom + kScrollbarPadding + kScrollbarHeight);
 			m_thresholdScroll.MoveWindow(rtScrollbar);
+		}
+
+		if (m_thresholdLabel.GetSafeHwnd())
+		{
+			const CRect rtThresholdLabel(
+				cx - kScrollbarPadding - kThresholdLabelWidth,
+				rtImageView.bottom + kScrollbarPadding,
+				cx - kScrollbarPadding,
+				rtImageView.bottom + kScrollbarPadding + kScrollbarHeight);
+			m_thresholdLabel.MoveWindow(rtThresholdLabel);
 		}
 	}
 }
@@ -164,6 +183,7 @@ void DisplayDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 	{
 		m_threshold = newPos;
 		m_thresholdScroll.SetScrollPos(m_threshold, TRUE);
+		UpdateThresholdLabel();
 		UpdateDisplay();
 	}
 }
@@ -180,4 +200,11 @@ void DisplayDlg::UpdateDisplay()
 
 	IPVM::ImageProcessing::Copy(labelImage, IPVM::Rect(labelImage), *m_labelImage);
 	m_imageView->SetImage(*m_labelImage, IPVM::Rect(*m_labelImage));
+}
+
+void DisplayDlg::UpdateThresholdLabel()
+{
+	CString text;
+	text.Format(_T("%d"), m_threshold);
+	m_thresholdLabel.SetWindowText(text);
 }
