@@ -14,6 +14,8 @@
 #define IDC_BUTTON_PROCESS_FRINGE       1005
 #define IDC_LIST_IMAGES                 1006
 #define IDC_BUTTON_SAVE_IMAGE           1007
+#define IDC_BUTTON_PROCESS_FRINGE2      1009
+#define IDC_BUTTON_DISPLAY              1009
 
 // Next default values for new objects
 // 

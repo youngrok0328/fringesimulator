@@ -28,6 +28,7 @@ void CommandDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_BUTTON_SAVE_IMAGE, m_buttonSaveImage);
 	DDX_Control(pDX, IDC_BUTTON_GENERATE_FRINGE, m_buttonGenerateFringe);
 	DDX_Control(pDX, IDC_BUTTON_PROCESS_FRINGE, m_buttonProcessFringe);
+	DDX_Control(pDX, IDC_BUTTON_DISPLAY, m_buttonDisplay);
 	DDX_Control(pDX, IDC_LIST_IMAGES, m_images);
 }
 
@@ -37,6 +38,7 @@ BEGIN_MESSAGE_MAP(CommandDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_LOAD_IMAGE, &CommandDlg::OnBnClickedButtonLoadImage)
     ON_BN_CLICKED(IDC_BUTTON_SAVE_IMAGE, &CommandDlg::OnBnClickedButtonSaveImage)
 	ON_BN_CLICKED(IDC_BUTTON_PROCESS_FRINGE, &CommandDlg::OnBnClickedButtonProcessFringe)
+	ON_BN_CLICKED(IDC_BUTTON_DISPLAY, &CommandDlg::OnBnClickedButtonDisplay)
 	ON_LBN_SELCHANGE(IDC_LIST_IMAGES, &CommandDlg::OnLbnSelchangeListImages)
 	ON_LBN_DBLCLK(IDC_LIST_IMAGES, &CommandDlg::OnLbnDblclkListImages)
 	ON_WM_SIZE()
@@ -71,7 +73,7 @@ void CommandDlg::OnSize(UINT nType, int cx, int cy)
 	const int32_t buttonHeight = rtButton.Height();
 	const int32_t controlGap = 1;
 
-	CButton *buttons[] = { &m_buttonGenerateFringe, &m_buttonLoadImage, &m_buttonSaveImage, &m_buttonProcessFringe };
+	CButton *buttons[] = { &m_buttonGenerateFringe, &m_buttonLoadImage, &m_buttonSaveImage, &m_buttonProcessFringe, &m_buttonDisplay };
 	const int32_t buttonCount = _countof(buttons);
 
 	const int32_t buttonWidth = (rtClient.Width() - (buttonCount + 1) * controlGap) / buttonCount;
@@ -140,6 +142,8 @@ void CommandDlg::AutoGenerateIMageSave()
 	::PostMessage(m_parentHwnd, UM_AUTOGENERATE_FRINGE, 0, 0);
 }
 
-
-
-
+void CommandDlg::OnBnClickedButtonDisplay()
+{
+	::PostMessage(m_parentHwnd, UM_DISPLAY, 0, 0);
+	//
+}

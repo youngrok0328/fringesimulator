@@ -12,6 +12,7 @@
 #include "Process1D.h"
 #include "Process2D.h"
 #include "ProfileDlg.h"
+#include "DisplayDlg.h"
 
 #include "Algorithm/FastFourierTransform1D.h"
 #include "Algorithm/ImageProcessing.h"
@@ -79,6 +80,7 @@ BEGIN_MESSAGE_MAP(FringeProjectionSimulatorDlg, CDialog)
 	ON_MESSAGE(UM_VIEW_IMAGE, OnViewImage)
 	ON_MESSAGE(UM_VIEW_PROFILE, OnViewProfile)
 	ON_MESSAGE(UM_AUTOGENERATE_FRINGE, OnAutoGenerateFringe)
+	ON_MESSAGE(UM_DISPLAY, OnDisplay)
 	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
@@ -578,6 +580,22 @@ LRESULT FringeProjectionSimulatorDlg::OnAutoGenerateFringe(WPARAM wparam, LPARAM
 	
 	return 0;
 	
+}
+
+LRESULT FringeProjectionSimulatorDlg::OnDisplay(WPARAM wparam, LPARAM lparam)
+{
+	UNREFERENCED_PARAMETER(wparam);
+	UNREFERENCED_PARAMETER(lparam);
+
+	if (m_inputImage->GetSizeX() <= 0 || m_inputImage->GetSizeY() <= 0)
+	{
+		return 0;
+	}
+
+	auto* displayDlg = new DisplayDlg(*m_inputImage, this);
+	displayDlg->Create(IDD_PROFILE, this);
+
+	return 0;
 }
 
 

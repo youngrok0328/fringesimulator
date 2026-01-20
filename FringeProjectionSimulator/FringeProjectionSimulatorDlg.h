@@ -67,6 +67,7 @@ protected:
 	afx_msg LRESULT OnViewImage(WPARAM wparam, LPARAM lparam);
 	afx_msg LRESULT OnViewProfile(WPARAM wparam, LPARAM lparam);
 	afx_msg LRESULT OnAutoGenerateFringe(WPARAM wparam, LPARAM lparam);
+	afx_msg LRESULT OnDisplay(WPARAM wparam, LPARAM lparam);
 
 public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);

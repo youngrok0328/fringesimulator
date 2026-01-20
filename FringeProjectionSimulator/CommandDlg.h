@@ -23,6 +23,8 @@ protected:
 	CButton m_buttonLoadImage;
     CButton m_buttonSaveImage;
 	CButton m_buttonProcessFringe;
+	CButton m_buttonDisplay;
+
 	CListBox m_images;
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
@@ -39,4 +41,5 @@ protected:
 public:
 	void UpdateImageList(const ImageLogger& imageLogger);
 	void AutoGenerateIMageSave();
+	afx_msg void OnBnClickedButtonDisplay();
 };

@@ -207,6 +207,7 @@ copy "$(IPVMSDK64)bin\IntekPlus.VisionMadang.Library.Widget_*.dll" "$(TargetDir)
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CommandDlg.h" />
+    <ClInclude Include="DisplayDlg.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MISImageLoader.h" />
     <ClInclude Include="Process.h" />
@@ -225,6 +226,7 @@ copy "$(IPVMSDK64)bin\IntekPlus.VisionMadang.Library.Widget_*.dll" "$(TargetDir)
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CommandDlg.cpp" />
+    <ClCompile Include="DisplayDlg.cpp" />
     <ClCompile Include="MISImageLoader.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="Process1D.cpp" />
