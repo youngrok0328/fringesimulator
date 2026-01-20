@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ImportGroup Label="PropertySheets" />
+	<PropertyGroup Label="UserMacros">
+		<IPVMSDK32>$(SolutionDir)iVisionMadangSDK\</IPVMSDK32>
+		<IPVMSDK64>$(SolutionDir)iVisionMadangSDK\</IPVMSDK64>
+		<XTToolkitVersionMajor>20</XTToolkitVersionMajor>
+		<XTToolkitVersionMinor>0</XTToolkitVersionMinor>
+		<XTToolkitVersionRevision>0</XTToolkitVersionRevision>
+		<XTToolkitVersionString>v$(XTToolkitVersionMajor).$(XTToolkitVersionMinor).$(XTToolkitVersionRevision)</XTToolkitVersionString>
+		<XTToolkitVersionNumber>$(XTToolkitVersionMajor)$(XTToolkitVersionMinor)$(XTToolkitVersionRevision)</XTToolkitVersionNumber>
+		<XTToolkitVcVersion>vc160</XTToolkitVcVersion>
+		<XTToolkitInclude>C:\Program Files (x86)\Codejock Software\MFC\Xtreme ToolkitPro $(XTToolkitVersionString)\Source\</XTToolkitInclude>
+		<XTToolkitLib64>C:\Program Files (x86)\Codejock Software\MFC\Xtreme ToolkitPro $(XTToolkitVersionString)\Lib\$(XTToolkitVcVersion)x64\</XTToolkitLib64>
+		<XTToolkitLib32>C:\Program Files (x86)\Codejock Software\MFC\Xtreme ToolkitPro $(XTToolkitVersionString)\Lib\$(XTToolkitVcVersion)\</XTToolkitLib32>
+		<XTToolkitBin64>C:\Program Files (x86)\Codejock Software\MFC\Xtreme ToolkitPro $(XTToolkitVersionString)\Bin\$(XTToolkitVcVersion)x64\</XTToolkitBin64>
+		<XTToolkitBin32>C:\Program Files (x86)\Codejock Software\MFC\Xtreme ToolkitPro $(XTToolkitVersionString)\Bin\$(XTToolkitVcVersion)\</XTToolkitBin32>
+	</PropertyGroup>
+	<PropertyGroup />
+	<ItemDefinitionGroup />
+	<ItemGroup>
+		<BuildMacro Include="IPVMSDK32">
+			<Value>$(IPVMSDK32)</Value>
+		</BuildMacro>
+		<BuildMacro Include="IPVMSDK64">
+			<Value>$(IPVMSDK64)</Value>
+		</BuildMacro>
+		<BuildMacro Include="XTToolkitVersionMajor">
+			<Value>$(XTToolkitVersionMajor)</Value>
+		</BuildMacro>
+		<BuildMacro Include="XTToolkitVersionMinor">
+			<Value>$(XTToolkitVersionMinor)</Value>
+		</BuildMacro>
+		<BuildMacro Include="XTToolkitVersionRevision">
+			<Value>$(XTToolkitVersionRevision)</Value>
+		</BuildMacro>
+		<BuildMacro Include="XTToolkitVersionString">
+			<Value>$(XTToolkitVersionString)</Value>
+		</BuildMacro>
+		<BuildMacro Include="XTToolkitVersionNumber">
+			<Value>$(XTToolkitVersionNumber)</Value>
+		</BuildMacro>
+		<BuildMacro Include="XTToolkitVcVersion">
+			<Value>$(XTToolkitVcVersion)</Value>
+		</BuildMacro>
+		<BuildMacro Include="XTToolkitInclude">
+			<Value>$(XTToolkitInclude)</Value>
+		</BuildMacro>
+		<BuildMacro Include="XTToolkitLib64">
+			<Value>$(XTToolkitLib64)</Value>
+		</BuildMacro>
+		<BuildMacro Include="XTToolkitLib32">
+			<Value>$(XTToolkitLib32)</Value>
+		</BuildMacro>
+		<BuildMacro Include="XTToolkitBin64">
+			<Value>$(XTToolkitBin64)</Value>
+		</BuildMacro>
+		<BuildMacro Include="XTToolkitBin32">
+			<Value>$(XTToolkitBin32)</Value>
+		</BuildMacro>
+	</ItemGroup>
+</Project>

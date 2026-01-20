@@ -1,0 +1,6 @@
+# top-most EditorConfig file
+root = true
+
+[*.{h,cpp,cu}]
+charset = utf-8-bom
+
