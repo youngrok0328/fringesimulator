@@ -22,8 +22,14 @@ protected:
 	IPVM::BlobInfo* m_blobInfos;
 	CScrollBar m_thresholdScroll;
 	CStatic m_thresholdLabel;
+	CStatic m_minBlobAreaLabel;
+	CEdit m_minBlobAreaEdit;
 	CListCtrl m_blobTable;
 	int m_threshold;
+	int m_minBlobArea;
+	int m_sortColumn;
+	bool m_sortAscending;
+
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 	virtual BOOL OnInitDialog();
@@ -33,8 +39,13 @@ protected:
 	afx_msg void OnNcDestroy();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnMinBlobAreaChange();
+	afx_msg void OnBlobTableColumnClick(NMHDR* pNMHDR, LRESULT* pResult);
 
 	void UpdateDisplay();
 	void UpdateThresholdLabel();
+	void UpdateMinBlobAreaEdit();
 	void UpdateBlobTable(int32_t blobCount);
+
+	static int CALLBACK CompareBlobItems(LPARAM leftItem, LPARAM rightItem, LPARAM sortParam);
 };
