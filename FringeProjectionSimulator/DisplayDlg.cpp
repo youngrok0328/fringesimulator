@@ -22,6 +22,7 @@ namespace
 	constexpr int32_t kScrollbarHeight = 18;
 	constexpr int32_t kScrollbarPadding = 4;
 	constexpr int32_t kThresholdLabelWidth = 60;
+	constexpr int32_t kTableHeight = 140;
 	constexpr int32_t kThresholdMin = 0;
 	constexpr int32_t kThresholdMax = 255;
 	constexpr int32_t kThresholdDefault = 10;
@@ -72,8 +73,7 @@ BOOL DisplayDlg::OnInitDialog()
 	GetClientRect(&rtClient);
 
 	CRect rtImageView(rtClient);
-	rtImageView.DeflateRect(0, 0, 0, kScrollbarHeight + kScrollbarPadding);
-
+	rtImageView.DeflateRect(0, 0, 0, kScrollbarHeight + kScrollbarPadding + kTableHeight + kScrollbarPadding);
 	m_imageView = new IPVM::ImageView(GetSafeHwnd(), rtImageView);
 
 	const CRect rtScrollbar(
@@ -86,6 +86,11 @@ BOOL DisplayDlg::OnInitDialog()
 		rtScrollbar.top,
 		rtScrollbar.right + kScrollbarPadding + kThresholdLabelWidth,
 		rtScrollbar.bottom);
+	const CRect rtBlobTable(
+		kScrollbarPadding,
+		rtScrollbar.bottom + kScrollbarPadding,
+		rtClient.right - kScrollbarPadding,
+		rtScrollbar.bottom + kScrollbarPadding + kTableHeight);
 
 	m_thresholdScroll.Create(WS_CHILD | WS_VISIBLE | SBS_HORZ, rtScrollbar, this, 1);
 	m_thresholdScroll.SetScrollRange(kThresholdMin, kThresholdMax, FALSE);
@@ -93,6 +98,16 @@ BOOL DisplayDlg::OnInitDialog()
 
 	m_thresholdLabel.Create(_T(""), WS_CHILD | WS_VISIBLE | SS_CENTER, rtThresholdLabel, this);
 	UpdateThresholdLabel();
+
+	m_thresholdLabel.Create(_T(""), WS_CHILD | WS_VISIBLE | SS_CENTER, rtThresholdLabel, this);
+	UpdateThresholdLabel();
+
+	m_blobTable.Create(WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS, rtBlobTable, this, 2);
+	m_blobTable.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
+	m_blobTable.InsertColumn(0, _T("Index"), LVCFMT_LEFT, 60);
+	m_blobTable.InsertColumn(1, _T("Width"), LVCFMT_RIGHT, 80);
+	m_blobTable.InsertColumn(2, _T("Height"), LVCFMT_RIGHT, 80);
+	m_blobTable.InsertColumn(3, _T("Area"), LVCFMT_RIGHT, 90);
 
 	UpdateDisplay();
 
@@ -120,7 +135,7 @@ void DisplayDlg::OnSize(UINT nType, int cx, int cy)
 
 	if (m_imageView && m_imageView->GetSafeHwnd())
 	{
-		CRect rtImageView(0, 0, cx, cy - kScrollbarHeight - kScrollbarPadding);
+		CRect rtImageView(0, 0, cx, cy - kScrollbarHeight - kScrollbarPadding - kTableHeight - kScrollbarPadding);
 		::MoveWindow(m_imageView->GetSafeHwnd(), rtImageView.left, rtImageView.top, rtImageView.Width(), rtImageView.Height(), TRUE);
 
 		if (m_thresholdScroll.GetSafeHwnd())
@@ -141,6 +156,16 @@ void DisplayDlg::OnSize(UINT nType, int cx, int cy)
 				cx - kScrollbarPadding,
 				rtImageView.bottom + kScrollbarPadding + kScrollbarHeight);
 			m_thresholdLabel.MoveWindow(rtThresholdLabel);
+		}
+
+		if (m_blobTable.GetSafeHwnd())
+		{
+			const CRect rtBlobTable(
+				kScrollbarPadding,
+				rtImageView.bottom + kScrollbarPadding + kScrollbarHeight + kScrollbarPadding,
+				cx - kScrollbarPadding,
+				rtImageView.bottom + kScrollbarPadding + kScrollbarHeight + kScrollbarPadding + kTableHeight);
+			m_blobTable.MoveWindow(rtBlobTable);
 		}
 	}
 }
@@ -200,6 +225,9 @@ void DisplayDlg::UpdateDisplay()
 
 	IPVM::ImageProcessing::Copy(labelImage, IPVM::Rect(labelImage), *m_labelImage);
 	m_imageView->SetImage(*m_labelImage, IPVM::Rect(*m_labelImage));
+
+
+	UpdateBlobTable(blobCount);
 }
 
 void DisplayDlg::UpdateThresholdLabel()
@@ -207,4 +235,37 @@ void DisplayDlg::UpdateThresholdLabel()
 	CString text;
 	text.Format(_T("%d"), m_threshold);
 	m_thresholdLabel.SetWindowText(text);
+}
+
+void DisplayDlg::UpdateBlobTable(int32_t blobCount)
+{
+	if (!m_blobTable.GetSafeHwnd())
+	{
+		return;
+	}
+
+	m_blobTable.SetRedraw(FALSE);
+	m_blobTable.DeleteAllItems();
+
+	for (int32_t index = 0; index < blobCount; ++index)
+	{
+		const auto& blobRect = m_blobInfos[index].m_roi;
+		const int32_t width = blobRect.Width();
+		const int32_t height = blobRect.Height();
+		const int32_t area = width * height;
+
+		CString text;
+		text.Format(_T("%d"), index + 1);
+		m_blobTable.InsertItem(index, text);
+
+		text.Format(_T("%d"), width);
+		m_blobTable.SetItemText(index, 1, text);
+		text.Format(_T("%d"), height);
+		m_blobTable.SetItemText(index, 2, text);
+		text.Format(_T("%d"), area);
+		m_blobTable.SetItemText(index, 3, text);
+	}
+
+	m_blobTable.SetRedraw(TRUE);
+	m_blobTable.Invalidate();
 }

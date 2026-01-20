@@ -22,6 +22,7 @@ protected:
 	IPVM::BlobInfo* m_blobInfos;
 	CScrollBar m_thresholdScroll;
 	CStatic m_thresholdLabel;
+	CListCtrl m_blobTable;
 	int m_threshold;
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
@@ -35,4 +36,5 @@ protected:
 
 	void UpdateDisplay();
 	void UpdateThresholdLabel();
+	void UpdateBlobTable(int32_t blobCount);
 };
