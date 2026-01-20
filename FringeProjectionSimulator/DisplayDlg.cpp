@@ -254,6 +254,15 @@ void DisplayDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		m_threshold = newPos;
 		m_thresholdScroll.SetScrollPos(m_threshold, TRUE);
 		UpdateThresholdLabel();
+		if (nSBCode == SB_THUMBTRACK)
+		{
+			return;
+		}
+	}
+
+	if (nSBCode == SB_THUMBPOSITION || nSBCode == SB_ENDSCROLL || nSBCode == SB_LINELEFT
+		|| nSBCode == SB_LINERIGHT || nSBCode == SB_PAGELEFT || nSBCode == SB_PAGERIGHT)
+	{
 		UpdateDisplay();
 	}
 }
