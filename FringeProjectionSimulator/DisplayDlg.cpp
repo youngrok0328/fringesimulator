@@ -48,6 +48,8 @@ DisplayDlg::DisplayDlg(const IPVM::Image_8u_C1& src, CWnd* pParent /*=nullptr*/)
 	, m_minBlobArea(kMinBlobAreaDefault)
 	, m_sortColumn(-1)
 	, m_sortAscending(true)
+	, m_blobCount(0)
+	, m_selectedBlobIndex(-1)
 {
 	IPVM::ImageProcessing::Copy(src, IPVM::Rect(src), *m_data8u);
 }
@@ -73,6 +75,7 @@ BEGIN_MESSAGE_MAP(DisplayDlg, CDialog)
 	ON_WM_HSCROLL()
 	ON_EN_CHANGE(kMinBlobAreaEditId, &DisplayDlg::OnMinBlobAreaChange)
 	ON_NOTIFY(LVN_COLUMNCLICK, kBlobTableId, &DisplayDlg::OnBlobTableColumnClick)
+	ON_NOTIFY(LVN_ITEMCHANGED, kBlobTableId, &DisplayDlg::OnBlobTableItemChanged)
 END_MESSAGE_MAP()
 
 
@@ -275,7 +278,7 @@ void DisplayDlg::OnBlobTableColumnClick(NMHDR* pNMHDR, LRESULT* pResult)
 	auto* listView = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	const int column = listView->iSubItem;
 
-	if (column >= 1 && column <= 3)
+	if (column >= 0 && column <= 3)
 	{
 		if (m_sortColumn == column)
 		{
@@ -293,6 +296,33 @@ void DisplayDlg::OnBlobTableColumnClick(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
+
+void DisplayDlg::OnBlobTableItemChanged(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	auto* listView = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+
+	if ((listView->uChanged & LVIF_STATE) == 0)
+	{
+		*pResult = 0;
+		return;
+	}
+
+	int32_t selectedIndex = -1;
+	const int itemIndex = m_blobTable.GetNextItem(-1, LVNI_SELECTED);
+	if (itemIndex >= 0)
+	{
+		selectedIndex = static_cast<int32_t>(m_blobTable.GetItemData(itemIndex));
+	}
+
+	if (selectedIndex != m_selectedBlobIndex)
+	{
+		m_selectedBlobIndex = selectedIndex;
+		UpdateBlobOverlay();
+	}
+
+	*pResult = 0;
+}
+
 void DisplayDlg::UpdateDisplay()
 {
 	IPVM::Image_8u_C1 tempimage(m_data8u->GetSizeX(), m_data8u->GetSizeY());
@@ -304,10 +334,11 @@ void DisplayDlg::UpdateDisplay()
 	m_blobDetection->DetectBlob_8Con(tempimage, IPVM::Rect(tempimage), m_minBlobArea, kBlobMaxNum, m_blobInfos, blobCount, labelImage);
 
 	IPVM::ImageProcessing::Copy(labelImage, IPVM::Rect(labelImage), *m_labelImage);
-	m_imageView->SetImage(*m_labelImage, IPVM::Rect(*m_labelImage));
+	m_imageView->SetImage(*m_data8u, IPVM::Rect(*m_data8u));
 
-
+	m_blobCount = blobCount;
 	UpdateBlobTable(blobCount);
+	UpdateBlobOverlay();
 }
 
 void DisplayDlg::UpdateThresholdLabel()
@@ -354,13 +385,57 @@ void DisplayDlg::UpdateBlobTable(int32_t blobCount)
 		m_blobTable.SetItemText(index, 3, text);
 	}
 
-	if (m_sortColumn >= 1 && m_sortColumn <= 3)
+	if (m_sortColumn >= 0 && m_sortColumn <= 3)
 	{
 		m_blobTable.SortItems(&DisplayDlg::CompareBlobItems, reinterpret_cast<DWORD_PTR>(this));
 	}
 
+	if (m_selectedBlobIndex >= blobCount)
+	{
+		m_selectedBlobIndex = -1;
+	}
+
+	int selectedItemIndex = -1;
+	const int itemCount = m_blobTable.GetItemCount();
+	for (int itemIndex = 0; itemIndex < itemCount; ++itemIndex)
+	{
+		if (static_cast<int32_t>(m_blobTable.GetItemData(itemIndex)) == m_selectedBlobIndex)
+		{
+			selectedItemIndex = itemIndex;
+			break;
+		}
+	}
+
+	if (selectedItemIndex >= 0)
+	{
+		m_blobTable.SetItemState(selectedItemIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+		m_blobTable.EnsureVisible(selectedItemIndex, FALSE);
+	}
+
 	m_blobTable.SetRedraw(TRUE);
 	m_blobTable.Invalidate();
+}
+
+void DisplayDlg::UpdateBlobOverlay()
+{
+	if (!m_imageView || !m_imageView->GetSafeHwnd())
+	{
+		return;
+	}
+
+	m_imageView->ImageOverlayClear(1);
+
+	for (int32_t index = 0; index < m_blobCount; ++index)
+	{
+		const auto& blobRect = m_blobInfos[index].m_roi;
+		const COLORREF color = (index == m_selectedBlobIndex) ? RGB(255, 0, 0) : RGB(0, 0, 255);
+
+		CString name;
+		name.Format(_T("BLOB_%d"), index);
+		m_imageView->ROISet(name, name, blobRect, color, 1);
+		m_imageView->ImageOverlayAdd(1, m_blobInfos[index].m_roi, color, 2);
+	}
+	m_imageView->ImageOverlayShow(1);
 }
 
 int CALLBACK DisplayDlg::CompareBlobItems(LPARAM leftItem, LPARAM rightItem, LPARAM sortParam)
@@ -377,6 +452,10 @@ int CALLBACK DisplayDlg::CompareBlobItems(LPARAM leftItem, LPARAM rightItem, LPA
 
 	switch (dialog->m_sortColumn)
 	{
+	case 0:
+		leftValue = leftIndex + 1;
+		rightValue = rightIndex + 1;
+		break;
 	case 1:
 		leftValue = leftRect.Width();
 		rightValue = rightRect.Width();

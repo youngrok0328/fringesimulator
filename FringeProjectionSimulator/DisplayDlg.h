@@ -29,7 +29,8 @@ protected:
 	int m_minBlobArea;
 	int m_sortColumn;
 	bool m_sortAscending;
-
+	int32_t m_blobCount;
+	int32_t m_selectedBlobIndex;
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 	virtual BOOL OnInitDialog();
@@ -41,11 +42,13 @@ protected:
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnMinBlobAreaChange();
 	afx_msg void OnBlobTableColumnClick(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBlobTableItemChanged(NMHDR* pNMHDR, LRESULT* pResult);
 
 	void UpdateDisplay();
 	void UpdateThresholdLabel();
 	void UpdateMinBlobAreaEdit();
 	void UpdateBlobTable(int32_t blobCount);
+	void UpdateBlobOverlay();
 
 	static int CALLBACK CompareBlobItems(LPARAM leftItem, LPARAM rightItem, LPARAM sortParam);
 };
